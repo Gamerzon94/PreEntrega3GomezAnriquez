@@ -76,7 +76,7 @@ function buscarAnimatronico(animatronico){
     return animatronico.nombre == compraAnimatronico;
 }
 
-function agregarAnimatronico() {
+function agregarAnimatronico() { //funcion que agrega los productos al localStorage
     nombre = document.getElementById('nombre').value;
     precio = document.getElementById('precio').value;
     stock = document.getElementById('stock').value;
@@ -85,16 +85,16 @@ function agregarAnimatronico() {
     animatronicosJson = JSON.stringify(listaAnimatronicos);
     localStorage.setItem("animatronicosActuales", animatronicosJson);
     llenarCards();
-    event.preventDefault();
+    event.preventDefault(); //evito que la pagina se recargue luego de que se ejecute el formulario
 }
 
 function llenarCards(){
-    contenedor = document.getElementById("animatronicos");
+    contenedor = document.getElementById("animatronicos"); //obtengo el div padre
     if(localStorage.getItem("animatronicosActuales")!=null){
-        animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales"));
+        animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales")); //valido que existan productos
     }
-    cards = "";
-    for(let animatronico of animatronicoParseado){
+    cards = ""; //inicializo la variable
+    for(let animatronico of animatronicoParseado){ //genero las cards segun la cantidad de productos
         cards = cards+"<div class=\"card\">" +
                             "<h3>"+animatronico.nombre+"</h3>" +
                             "<p>$"+animatronico.precio+"</p>" +
@@ -102,40 +102,39 @@ function llenarCards(){
                             "<button onclick=\"agregarAlCarro('"+animatronico.nombre+"')\">Agregar al carro</button>" +
                             "</div>";
     }
-    contenedor.innerHTML = cards;
+    contenedor.innerHTML = cards; //envio las cards al html
 }
 
-function agregarAlCarro(nombre){
-    compraAnimatronico = nombre;
+function agregarAlCarro(nombre){ //funcion que agrega al carrito
+    compraAnimatronico = nombre; //renombro la variable para la busqueda
     if(sessionStorage.getItem('animatronicosCarro')!=null){
-        carrito = JSON.parse(sessionStorage.getItem('animatronicosCarro'));
+        carrito = JSON.parse(sessionStorage.getItem('animatronicosCarro')); //recupero el carrito 
+        sessionStorage.setItem('animatronicosCarro',null);
     }else{
-        carrito = null;
+        carrito = null; //si no existe carrito controlo que no este inicializado
     }
+    listaAnimatronicosCarrito = [];
     if(localStorage.getItem("animatronicosActuales")!=null){
-        animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales"));
+        animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales")); //recupero todos los productos
     }
-    let resultadoBusqueda = animatronicoParseado.find(buscarAnimatronico);
-    console.log(resultadoBusqueda);
+    let resultadoBusqueda = animatronicoParseado.find(buscarAnimatronico); //busco el producto
     if(resultadoBusqueda!=null){
         if(carrito!=null){
-            console.log(carrito);
-            for(let animatronicoAux of carrito){
-                console.log(animatronicoAux);
+            for(let animatronicoAux of carrito){ //recorro el carrito
                 animatronico = new Animatronico(animatronicoAux.nombre,animatronicoAux.precio,animatronicoAux.stock);
                 listaAnimatronicosCarrito.push(animatronico);
             }
-            listaAnimatronicosCarrito.push(resultadoBusqueda);
-            sessionStorage.setItem('animatronicosCarro',JSON.stringify(listaAnimatronicosCarrito));
+            listaAnimatronicosCarrito.push(resultadoBusqueda); //agrego el nuevo producto
+            sessionStorage.setItem('animatronicosCarro',JSON.stringify(listaAnimatronicosCarrito)); //guardo el carrito en la sesion
         }else{
-            animatronico = new Animatronico(resultadoBusqueda.nombre,resultadoBusqueda.precio,resultadoBusqueda.stock);
+            animatronico = new Animatronico(resultadoBusqueda.nombre,resultadoBusqueda.precio,resultadoBusqueda.stock); //si el carrito no existe agrego por primera vez
             listaAnimatronicosCarrito.push(animatronico);
             sessionStorage.setItem('animatronicosCarro',JSON.stringify(listaAnimatronicosCarrito));
         }
     }
 }
 
-//codigo de ejecucion
+//codigo de ejecucion anterior
 /*nombre = prompt("Bienvenido nuevo usuario, por favor dime tu nombre");
 
 console.log(` _____        _                       _____      _            _        _                            _       _____
