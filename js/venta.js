@@ -31,7 +31,13 @@ let cards = "";
 
 let carrito = [];
 
+let carritoAux = [];
+
 let listaAnimatronicosCarrito = [];
+
+let contenidoCarrito = "";
+
+let totalCarrito = 0;
 
 let menu = `1.- [ADMINISTRACIÓN] Agregar animatronicos al Stock
 2.- Rentar un animatronico.
@@ -132,6 +138,42 @@ function agregarAlCarro(nombre){ //funcion que agrega al carrito
             sessionStorage.setItem('animatronicosCarro',JSON.stringify(listaAnimatronicosCarrito));
         }
     }
+}
+
+function mostrarCarrito(){
+    contenedor = document.getElementById("carrito"); //obtengo el div padre
+    totalCarrito = 0;
+    contenidoCarrito = "";
+    if(sessionStorage.getItem('animatronicosCarro')!=null){
+        carritoAux = JSON.parse(sessionStorage.getItem('animatronicosCarro')); //recupero el carrito 
+    }else{
+        carritoAux = null; //si no existe carrito controlo que no este inicializado
+    }
+    if(localStorage.getItem("animatronicosActuales")!=null){
+        animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales")); //recupero todos los productos
+    }else{
+        animatronicoParseado = null;
+    }
+    let contarNombres = {};
+    if(carritoAux!=null){
+        carrito.forEach(animatronico => {
+            let nombre = animatronico.nombre;
+            contarNombres[nombre] = (contarNombres[nombre] || 0) + 1;
+        });
+        for (let clave in contarNombres) { //cuento cuantas veces tengo los productos en el carro
+            compraAnimatronico = clave; //renombro la variable para la busqueda
+            let resultadoBusqueda = animatronicoParseado.find(buscarAnimatronico); //busco el producto
+            contenidoCarrito = contenidoCarrito+"<p>"+clave+" tiene un valor unitario de $"+resultadoBusqueda.precio+" y tiene actualmente: "+contarNombres[clave]+" en carrito con un total de: $"+resultadoBusqueda.precio*contarNombres[clave]+"</p>" //imprimo el producto, con su valor y su total
+            totalCarrito=totalCarrito+(resultadoBusqueda.precio*contarNombres[clave]);
+        }
+        contenidoCarrito = contenidoCarrito+"<p>El total del carrito es: $"+totalCarrito+"</p>"; //imprimo el total del carro
+    }else{
+        carritoAux=[];
+    }
+    if(contenidoCarrito == ""){
+        contenidoCarrito = "<p>No hay productos agregados al carrito</p>"
+    }
+    contenedor.innerHTML = contenidoCarrito;
 }
 
 //codigo de ejecucion anterior
