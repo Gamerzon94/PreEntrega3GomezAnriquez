@@ -29,6 +29,10 @@ let animatronicoParseado;
 
 let cards = "";
 
+let carrito = [];
+
+let listaAnimatronicosCarrito = [];
+
 let menu = `1.- [ADMINISTRACIÓN] Agregar animatronicos al Stock
 2.- Rentar un animatronico.
 3.- ¿Buscas un animatronico?
@@ -82,26 +86,53 @@ function agregarAnimatronico() {
     localStorage.setItem("animatronicosActuales", animatronicosJson);
     llenarCards();
     event.preventDefault();
-  }
+}
 
 function llenarCards(){
     contenedor = document.getElementById("animatronicos");
-    console.log("entre1");
     if(localStorage.getItem("animatronicosActuales")!=null){
         animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales"));
-        console.log("entre2");
     }
     cards = "";
     for(let animatronico of animatronicoParseado){
-        console.log("entre3");
         cards = cards+"<div class=\"card\">" +
                             "<h3>"+animatronico.nombre+"</h3>" +
                             "<p>$"+animatronico.precio+"</p>" +
                             "<p>Stock: "+animatronico.stock+"</p>" +
-                            "<button onclick=\"agregarAlCarro("+animatronico.nombre+")\">Agregar al carro</button>" +
+                            "<button onclick=\"agregarAlCarro('"+animatronico.nombre+"')\">Agregar al carro</button>" +
                             "</div>";
     }
     contenedor.innerHTML = cards;
+}
+
+function agregarAlCarro(nombre){
+    compraAnimatronico = nombre;
+    if(sessionStorage.getItem('animatronicosCarro')!=null){
+        carrito = JSON.parse(sessionStorage.getItem('animatronicosCarro'));
+    }else{
+        carrito = null;
+    }
+    if(localStorage.getItem("animatronicosActuales")!=null){
+        animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales"));
+    }
+    let resultadoBusqueda = animatronicoParseado.find(buscarAnimatronico);
+    console.log(resultadoBusqueda);
+    if(resultadoBusqueda!=null){
+        if(carrito!=null){
+            console.log(carrito);
+            for(let animatronicoAux of carrito){
+                console.log(animatronicoAux);
+                animatronico = new Animatronico(animatronicoAux.nombre,animatronicoAux.precio,animatronicoAux.stock);
+                listaAnimatronicosCarrito.push(animatronico);
+            }
+            listaAnimatronicosCarrito.push(resultadoBusqueda);
+            sessionStorage.setItem('animatronicosCarro',JSON.stringify(listaAnimatronicosCarrito));
+        }else{
+            animatronico = new Animatronico(resultadoBusqueda.nombre,resultadoBusqueda.precio,resultadoBusqueda.stock);
+            listaAnimatronicosCarrito.push(animatronico);
+            sessionStorage.setItem('animatronicosCarro',JSON.stringify(listaAnimatronicosCarrito));
+        }
+    }
 }
 
 //codigo de ejecucion
