@@ -19,6 +19,16 @@ let contador = 0;
 
 let compraAnimatronico = "";
 
+let animatronico;
+
+let animatronicosJson;
+
+let contenedor;
+
+let animatronicoParseado;
+
+let cards = "";
+
 let menu = `1.- [ADMINISTRACIÓN] Agregar animatronicos al Stock
 2.- Rentar un animatronico.
 3.- ¿Buscas un animatronico?
@@ -62,8 +72,40 @@ function buscarAnimatronico(animatronico){
     return animatronico.nombre == compraAnimatronico;
 }
 
+function agregarAnimatronico() {
+    nombre = document.getElementById('nombre').value;
+    precio = document.getElementById('precio').value;
+    stock = document.getElementById('stock').value;
+    animatronico = new Animatronico(nombre,precio,stock);
+    listaAnimatronicos.push(animatronico);
+    animatronicosJson = JSON.stringify(listaAnimatronicos);
+    localStorage.setItem("animatronicosActuales", animatronicosJson);
+    llenarCards();
+    event.preventDefault();
+  }
+
+function llenarCards(){
+    contenedor = document.getElementById("animatronicos");
+    console.log("entre1");
+    if(localStorage.getItem("animatronicosActuales")!=null){
+        animatronicoParseado = JSON.parse(localStorage.getItem("animatronicosActuales"));
+        console.log("entre2");
+    }
+    cards = "";
+    for(let animatronico of animatronicoParseado){
+        console.log("entre3");
+        cards = cards+"<div class=\"card\">" +
+                            "<h3>"+animatronico.nombre+"</h3>" +
+                            "<p>$"+animatronico.precio+"</p>" +
+                            "<p>Stock: "+animatronico.stock+"</p>" +
+                            "<button onclick=\"agregarAlCarro("+animatronico.nombre+")\">Agregar al carro</button>" +
+                            "</div>";
+    }
+    contenedor.innerHTML = cards;
+}
+
 //codigo de ejecucion
-nombre = prompt("Bienvenido nuevo usuario, por favor dime tu nombre");
+/*nombre = prompt("Bienvenido nuevo usuario, por favor dime tu nombre");
 
 console.log(` _____        _                       _____      _            _        _                            _       _____
 |  ___|      | |                     |  ___|    | |          | |      (_)                          | |     |_   _|
@@ -191,4 +233,4 @@ Ante información actualizada de horarios por favor comuniquese por teléfono.
     }else{
         console.log("Opción no valida, intentelo de nuevo.")
     }
-}
+}*/
